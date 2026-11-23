@@ -1,0 +1,15 @@
+{
+  "name": "rewin0087",
+  "owner": {"name": "rewin0087", "url": "https://github.com/rewin0087"},
+  "description": "Claude Code plugins by rewin0087",
+  "plugins": [
+    {
+      "name": "branch-pr",
+      "source": "./",
+      "description": "PR / MR descriptions for your branch: overview, changes, caveats and QA scenarios in Markdown.",
+      "version": "1.0.0",
+      "category": "development",
+      "keywords": ["pull-request", "merge-request", "pr-description", "git"]
+    }
+  ]
+}
