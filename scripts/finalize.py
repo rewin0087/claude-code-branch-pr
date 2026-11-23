@@ -11,8 +11,10 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from prkit.errors import PRError  # noqa: E402
-from prkit.finalizer import FinalizeDigest, FinalizeOptions, Finalizer  # noqa: E402
+from prkit.core.errors import PRError  # noqa: E402
+from prkit.finalize.digest import FinalizeDigest  # noqa: E402
+from prkit.finalize.finalizer import Finalizer  # noqa: E402
+from prkit.finalize.options import FinalizeOptions  # noqa: E402
 
 
 def main():

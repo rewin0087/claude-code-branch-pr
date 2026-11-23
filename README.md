@@ -1,5 +1,10 @@
 # claude-code-branch-pr: PR / MR descriptions for your branch with Claude Code
 
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-7c4dff)](https://github.com/rewin0087/claude-code-branch-pr#install)
+[![Version](https://img.shields.io/github/v/tag/rewin0087/claude-code-branch-pr?sort=semver&label=version)](https://github.com/rewin0087/claude-code-branch-pr/tags)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/docs-website-blue)](https://rewin0087.github.io/claude-code-branch-pr/)
+
 **`/branch-pr` is a skill and plugin for [Claude Code](https://claude.com/claude-code)** that writes the pull request (GitHub, Bitbucket, Azure DevOps) or merge request (GitLab) description for the **current git branch**. Type `/branch-pr`, optionally paste the ticket on the next lines, and you get a brief, copy-paste-ready Markdown description:
 
 - **Overview**: the problem and what this change does about it, with the ticket reference.
@@ -8,6 +13,8 @@
 - **QA test scenarios**: a short checklist covering the success path, validation, failures, edge cases and one regression check.
 
 Plus a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) title with the type and the affected area: `feat(refunds): support partial refunds with amount validation`, `fix(auth)!: reject expired tokens on refresh`. The description is saved to `.branch-pr/PR_DESCRIPTION.md`, **copied to your clipboard**, and shown raw in the chat.
+
+![A pull request description written by /branch-pr: a Conventional Commits title, then Overview, Changes, Caveats and QA test scenarios](docs/images/pr-rendered.png)
 
 ## Usage
 
@@ -54,8 +61,10 @@ Nothing in your repo changes except `.branch-pr/`, which is git-ignored automati
 
 ```text
 /plugin marketplace add rewin0087/claude-code-branch-pr
-/plugin install branch-pr@rewin0087
+/plugin install branch-pr@rewin0087-branch-pr
 ```
+
+Then run `/branch-pr:branch-pr` (Claude Code namespaces plugin commands as `plugin:skill`).
 
 **As a personal skill:**
 
@@ -63,15 +72,32 @@ Nothing in your repo changes except `.branch-pr/`, which is git-ignored automati
 git clone https://github.com/rewin0087/claude-code-branch-pr ~/.claude/skills/branch-pr
 ```
 
+Then run `/branch-pr` in any repo. Update with `git -C ~/.claude/skills/branch-pr pull`.
+
 ## Example output
 
-See [references/description-format.md](references/description-format.md) for the format rules and a full example.
+See [references/description-format.md](references/description-format.md) for the format rules and a full example, and the [website](https://rewin0087.github.io/claude-code-branch-pr/) for the rendered and raw Markdown side by side.
+
+## Code layout
+
+Two CLIs, `scripts/collect.py` and `scripts/finalize.py`, built on the `scripts/prkit` package. Each class lives in its own file, grouped by what it is about:
+
+| Package | Classes |
+|---|---|
+| `core/` | `Git` (git CLI queries), `JsonFile`, `Clipboard`, `PRError` |
+| `branch/` | `BaseResolver` (which base, which merge-base), `ChangeSet`, `ChangedFile`, `UntrackedFile`, `DiffStatParser`, `FileKind`, `PatchWriter`, `TicketRefs` |
+| `hosting/` | `HostingPlatform` (GitHub, GitLab, Bitbucket, Azure), `CreateCommand` (`gh` / `glab`), `TemplateFinder` |
+| `signals/` | `CaveatSignals` (runs the rules), `FileSignals`, one `LineRule` per signal (`EnvVarRule`, `FeatureFlagRule`, `RouteRule`, `RemovedDefinitionRule`, `TodoRule`, `DebugOutputRule`, `SecretRule`), `FileHunks`, `SignalList`, `patterns` |
+| `title/` | Conventional Commits `vocabulary`, `ConventionalTitle`, `TypeHint`, `ScopeHint`, `TitleHints` |
+| `description/` | `DescriptionChecker` (runs `TitleCheck`, `SectionCheck`, `ContentCheck`), `MarkdownDoc`, `Findings` |
+| `collect/` | `Collector`, `CollectOptions`, `CollectDigest`, `OutputDir`, `Repository` |
+| `finalize/` | `Finalizer`, `FinalizeOptions`, `FinalizeDigest`, `WrittenDescription` |
 
 ## Related skills
 
 - [`/branch-review`](https://github.com/rewin0087/claude-code-review): AI code review of your branch.
 - [`/branch-qa`](https://github.com/rewin0087/claude-code-branch-qa): headless E2E and functional QA of your branch against its ticket.
-- [`/investigate`](https://github.com/rewin0087/claude-code-investigate): trace a flow and reproduce bugs.
+- [`/investigate`](https://rewin0087.github.io/claude-code-investigate/): trace a flow and reproduce bugs.
 
 ## License
 

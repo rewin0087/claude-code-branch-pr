@@ -4,6 +4,9 @@
 
 - Titles follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary): `<type>(<scope>)[!]: <description>`.
 - `collect.py` suggests a type and scope candidates; `finalize.py` rejects titles that don't follow the format and warns when `!` and the breaking-change caveat disagree.
+- Scripts reorganised into the `core`, `branch`, `hosting`, `signals`, `title`, `description`, `collect` and `finalize` packages, one class per file; output is unchanged.
+- The plugin marketplace is named `rewin0087-branch-pr` (install with `branch-pr@rewin0087-branch-pr`), so it doesn't clash with the other rewin0087 plugins.
+- GitHub Pages site in `docs/`.
 
 ## 1.0.0
 

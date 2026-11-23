@@ -1,7 +1,10 @@
 {
-  "name": "rewin0087",
-  "owner": {"name": "rewin0087", "url": "https://github.com/rewin0087"},
-  "description": "Claude Code plugins by rewin0087",
+  "name": "rewin0087-branch-pr",
+  "owner": {
+    "name": "rewin0087",
+    "url": "https://github.com/rewin0087"
+  },
+  "description": "/branch-pr: PR / MR descriptions for your branch",
   "plugins": [
     {
       "name": "branch-pr",
@@ -9,7 +12,12 @@
       "description": "PR / MR descriptions for your branch: overview, changes, caveats and QA scenarios in Markdown.",
       "version": "1.1.0",
       "category": "development",
-      "keywords": ["pull-request", "merge-request", "pr-description", "git"]
+      "keywords": [
+        "pull-request",
+        "merge-request",
+        "pr-description",
+        "git"
+      ]
     }
   ]
 }

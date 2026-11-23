@@ -10,9 +10,10 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from prkit.collector import CollectOptions, Collector  # noqa: E402
-from prkit.digest import CollectDigest  # noqa: E402
-from prkit.errors import PRError  # noqa: E402
+from prkit.collect.collector import Collector  # noqa: E402
+from prkit.collect.digest import CollectDigest  # noqa: E402
+from prkit.collect.options import CollectOptions  # noqa: E402
+from prkit.core.errors import PRError  # noqa: E402
 
 
 def main():
