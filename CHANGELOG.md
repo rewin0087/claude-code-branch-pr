@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+
+- Titles follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary): `<type>(<scope>)[!]: <description>`.
+- `collect.py` suggests a type and scope candidates; `finalize.py` rejects titles that don't follow the format and warns when `!` and the breaking-change caveat disagree.
+
 ## 1.0.0
 
 - `/branch-pr`: writes a PR/MR title and Markdown description for the current branch (overview, changes, caveats, QA test scenarios) from its diff, commits and the requirements given inline, as a file, URL or ticket id.

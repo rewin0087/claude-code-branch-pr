@@ -1,7 +1,35 @@
 # The description format
 
 The default layout `/branch-pr` writes when the repository has no PR/MR template of its own.
-Four sections, always in this order, always present.
+Four sections, always in this order, always present, under a Conventional Commits title.
+
+## Title
+
+[Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/#summary):
+`<type>(<scope>)[!]: <description>`, one line, under 72 characters.
+
+| Type | Use for |
+|---|---|
+| `feat` | A new feature or user-visible capability |
+| `fix` | A bug fix |
+| `perf` | A performance improvement |
+| `refactor` | Restructuring with no behaviour change |
+| `docs` | Documentation only |
+| `test` | Tests only |
+| `build` | Build system or dependencies |
+| `ci` | CI configuration |
+| `style` | Formatting only |
+| `chore` | Maintenance that touches no source or tests |
+| `revert` | Reverts earlier work |
+
+- **Scope**: the area affected, lower case: a domain or module (`refunds`, `auth`, `billing-api`),
+  not a generic folder. Reuse scopes from the repo's history.
+- **`!`**: a breaking change for callers or clients; the Caveats then say what breaks.
+- **Description**: imperative, lower case, no trailing period.
+
+Good: `feat(refunds): support partial refunds with amount validation`,
+`fix(auth)!: reject expired tokens on refresh`, `build(deps): upgrade rails to 8.1`.
+Bad: `SHOP-42 Partial refunds`, `Feat: Added refunds.`, `fix(app): stuff`.
 
 ## Overview
 
@@ -50,7 +78,7 @@ No caveats → `- None.`
 
 ## Example
 
-Title: `SHOP-42: Support partial refunds with amount validation`
+Title: `feat(refunds): support partial refunds with amount validation`
 
 ````markdown
 ## Overview
@@ -73,8 +101,8 @@ Closes #17 · Ticket: SHOP-42
 - **Migration**: adds the `refunds` table; run it before deploying the code.
 - **Config**: `REFUND_MAX_CENTS` caps a single refund (default 100000 = $1,000); set it per
   environment if a different cap is needed.
-- **Breaking change**: `legacy_refund` and the `index` action are removed; no callers remain in
-  this repo.
+- **Removed**: the unused `legacy_refund` helper and `index` action; no callers remain, so this
+  is not a breaking change.
 - **Limitation**: the limit is global, not per merchant (TODO left in `refund.py`).
 
 ## QA test scenarios

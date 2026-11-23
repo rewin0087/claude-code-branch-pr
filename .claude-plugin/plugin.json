@@ -1,8 +1,8 @@
 {
   "name": "branch-pr",
   "displayName": "Branch PR: pull request / merge request descriptions",
-  "version": "1.0.0",
-  "description": "Writes a brief, copy-paste-ready Markdown PR/MR description for the current git branch from its diff, commits and requirements: overview, list of changes, caveats (migrations, env vars, breaking changes, unmet requirements) and short QA test scenarios, plus a title. Fills the repo's own template when it has one and copies the result to the clipboard.",
+  "version": "1.1.0",
+  "description": "Writes a brief, copy-paste-ready Markdown PR/MR description for the current git branch from its diff, commits and requirements: overview, list of changes, caveats (migrations, env vars, breaking changes, unmet requirements) and short QA test scenarios, plus a Conventional Commits title (type and scope). Fills the repo's own template when it has one and copies the result to the clipboard.",
   "author": {"name": "rewin0087", "url": "https://github.com/rewin0087"},
   "license": "MIT",
   "keywords": ["pull-request", "merge-request", "pr-description", "git", "gitlab", "github", "claude-code", "skill"]

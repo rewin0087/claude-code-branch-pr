@@ -38,6 +38,13 @@ class CollectDigest(object):
                 L.extend("      - " + e for e in s["examples"])
                 if s["count"] > len(s["examples"]):
                     L.append("      … %d more" % (s["count"] - len(s["examples"])))
+        h = c["title_hints"]
+        L.append("\nTITLE   Conventional Commits: %s" % h["format"])
+        L.append("  type:  %s" % ("%s (from %s)" % (h["suggested_type"], h["type_source"]) if h["suggested_type"]
+                                 else "decide from the diff: feat (new capability) | fix (bug) | refactor | perf"))
+        L.append("  scope: %s" % (", ".join(h["scope_candidates"]) or "pick the area the change affects"))
+        if h["breaking_hint"]:
+            L.append("  breaking? definitions were removed: if callers outside this repo break, use '!' (feat(x)!: ...)")
         tpl = c["template"]
         L.append("\nTEMPLATE " + ("%s (fill its sections)%s" % (tpl["path"], "; others: " + ", ".join(tpl["others"]) if tpl["others"] else "")
                                   if tpl else "none in the repo: use the default layout"))

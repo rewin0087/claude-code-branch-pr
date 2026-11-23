@@ -10,6 +10,7 @@
 import os
 
 from .changeset import ChangeSet
+from .conventional import TitleHints
 from .errors import PRError
 from .gitcmd import Git
 from .jsonio import JsonFile
@@ -63,7 +64,8 @@ class Collector(object):
             "commits": commits, "tickets": TicketRefs.find(branch, commits),
             "totals": dict(cs.totals(), patch_lines=patch_lines),
             "files": [f.as_dict() for f in cs.ordered()], "by_kind": cs.by_kind(),
-            "signals": signals, "platform": platform.as_dict(), "template": template,
+            "signals": signals, "title_hints": TitleHints(commits, [f.as_dict() for f in cs.files], signals).build(),
+            "platform": platform.as_dict(), "template": template,
             "paths": {"out": self.out, "context": os.path.join(self.out, "context.json"), "patch": patch_path,
                       "description": os.path.join(self.out, "PR_DESCRIPTION.md"),
                       "title": os.path.join(self.out, "PR_TITLE.txt")},

@@ -6,6 +6,7 @@ Warnings: leftover placeholders, local file paths, a long description or title.
 """
 import re
 
+from .conventional import ConventionalTitle
 from .signals import SECRET
 
 SECTIONS = (
@@ -16,6 +17,7 @@ SECTIONS = (
 )
 PLACEHOLDER = re.compile(r"\{\{[^}]*\}\}|<(describe|add|insert|todo|fill)[^>]*>|\bTBD\b|lorem ipsum|\[(Role|Ticket|Link|TODO)[^\]]*\]", re.I)
 LOCAL_PATH = re.compile(r"(/Users/[\w.-]+|/home/[\w.-]+|[A-Z]:\\\\Users\\\\|/private/tmp/|\.branch-pr/)")
+BREAKING = re.compile(r"\*\*breaking changes?\*\*\s*:?\s*(?!none\b|n/a\b|no\b)|^BREAKING[ -]CHANGE:", re.I | re.M)
 HEADING = re.compile(r"^#{1,6}\s+.+$", re.M)
 LIST_ITEM = re.compile(r"^\s*([-*+]|\d+\.)\s+\S", re.M)
 LONG_BODY = 6000
@@ -44,6 +46,16 @@ class DescriptionChecker(object):
             self.warnings.append("the title is %d characters; keep it under %d" % (len(self.title), LONG_TITLE))
         if "\n" in self.title:
             self.errors.append("the title must be one line")
+        if self.title:
+            ct = ConventionalTitle(self.title)
+            errors, warnings = ct.problems()
+            self.errors += errors
+            self.warnings += warnings
+            says_breaking = bool(BREAKING.search(self.body))
+            if says_breaking and not ct.breaking:
+                self.warnings.append("the description lists a breaking change but the title has no '!' (e.g. feat(api)!: ...)")
+            if ct.breaking and not says_breaking:
+                self.warnings.append("the title is marked breaking ('!') but the description has no 'Breaking change' caveat")
 
     def _sections(self):
         if not HEADING.search(self.body):

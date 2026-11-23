@@ -1,6 +1,6 @@
 ---
 name: branch-pr
-description: Write a pull request / merge request description for the current git branch. Reads the branch's diff and commits (uncommitted work included), the requirements (ticket text, file, URL or what the user wrote) and the repo's own PR/MR template, then writes a brief, copy-paste-ready Markdown description with an overview, the list of changes, caveats (migrations, env vars, breaking changes, unmet requirements) and short QA test scenarios, plus a title. Saves it to .branch-pr/PR_DESCRIPTION.md, copies it to the clipboard, and prints the raw Markdown in the chat.
+description: Write a pull request / merge request description for the current git branch. Reads the branch's diff and commits (uncommitted work included), the requirements (ticket text, file, URL or what the user wrote) and the repo's own PR/MR template, then writes a brief, copy-paste-ready Markdown description with an overview, the list of changes, caveats (migrations, env vars, breaking changes, unmet requirements) and short QA test scenarios, plus a Conventional Commits title (type(scope): description). Saves it to .branch-pr/PR_DESCRIPTION.md, copies it to the clipboard, and prints the raw Markdown in the chat.
 argument-hint: "[requirements text on the next lines | ABC-123 | #123 | ticket URL | ticket file] [--base <branch>] [--committed-only] [--template <file> | --no-template] [--platform github|gitlab] [--no-copy] [--draft] [--create] [-- instructions]"
 disable-model-invocation: true
 allowed-tools: Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/collect.py *) Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/finalize.py *) Bash(git diff *) Bash(git log *) Bash(git show *) Bash(git status *) Bash(git grep *) Bash(git rev-parse *) Bash(git ls-files *) Bash(ls *) Read Grep Glob WebFetch Write(**/.branch-pr/**) Edit(**/.branch-pr/**)
@@ -73,8 +73,25 @@ It prints a digest and writes into `.branch-pr/` (kept out of git automatically)
 ## Step 3: Write the title and description
 
 Write two files with the Write tool (paths are in the digest):
-- `.branch-pr/PR_TITLE.txt`: one line, imperative mood, under 72 characters, with the ticket id
-  first when there is one: `SHOP-42: Support partial refunds with amount validation`.
+- `.branch-pr/PR_TITLE.txt`: one line in the
+  [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) format,
+  `<type>(<scope>): <description>`, under 72 characters:
+  `feat(refunds): support partial refunds with amount validation`.
+  - **type**: what kind of change it is, judged from the whole branch: `feat` (new capability),
+    `fix` (bug fix), `refactor` (no behaviour change), `perf`, `docs`, `test`, `build`
+    (dependencies, build system), `ci`, `style`, `chore` or `revert`. With several kinds, pick the
+    one that matters most to users: a feature with its tests and docs is `feat`. The digest's
+    `TITLE` lines suggest a type (from conventional commit messages already on the branch, or from
+    the file kinds) and scope candidates.
+  - **scope**: the area the change affects, one lower-case word or kebab-case term, a domain or
+    module name rather than a folder (`refunds`, `auth`, `checkout-api`), not `app` or `services`.
+    Follow the scopes the repo's history already uses (`git log --format=%s -50` on the base).
+  - `!` after the scope (`feat(api)!: ...`) only for a breaking change to callers or clients, and
+    then the Caveats must have a **Breaking change** item saying what breaks.
+  - **description**: imperative mood, lower case, no trailing period: "add", "support", "fix", not
+    "added" or "adds".
+  - Ticket ids go in the Overview's ticket line, not the title, unless the user asks for them in
+    the title (then append them: `feat(refunds): support partial refunds (SHOP-42)`).
 - `.branch-pr/PR_DESCRIPTION.md`: the description, in the format below.
 
 **If the repo has a PR/MR template** (`template` in the digest), keep its headings, order and
@@ -133,7 +150,7 @@ Rules that matter most:
 python3 ${CLAUDE_SKILL_DIR}/scripts/finalize.py --copy [--draft]
 ```
 
-(`--no-copy` from the user → drop `--copy`.) It checks the sections, the QA list, the size limit
+(`--no-copy` from the user → drop `--copy`.) It checks the Conventional Commits title, the sections, the QA list, the size limit
 of the platform, secret-looking values, leftover placeholders and local paths, then copies the
 description to the clipboard. On **FAIL**, fix the files and run it again. Fix warnings too
 unless they are deliberate (say which ones you kept and why).
@@ -143,7 +160,7 @@ unless they are deliberate (say which ones you kept and why).
 Reply with, in this order:
 1. One line: the branch, base and size (`feature/x ← main · 7 files, +120/-30`), and whether
    uncommitted work is included.
-2. **Title** in a one-line code block.
+2. **Title** (Conventional Commits) in a one-line code block.
 3. **Description** as raw Markdown inside a fence of **four** backticks with the `markdown`
    language, so the user can copy it exactly, including any inner code blocks:
    `````text
